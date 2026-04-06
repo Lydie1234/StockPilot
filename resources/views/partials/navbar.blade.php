@@ -21,7 +21,7 @@
                     </svg>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger mt-2 ms-n2">
                         2
-                        <span class="visually-hidden">unread messages</span>
+                        <span class="visually-hidden">messages non lus</span>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-md p-0">
@@ -30,9 +30,9 @@
                             <div class="d-flex gap-3">
                                 <img src="{{ asset('assets/images/avatar/avatar-1.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
-                                    <p class="mb-0">New order received</p>
-                                    <p class="mb-1">Order #12345 has been placed</p>
-                                    <div class="text-secondary">5 minutes ago</div>
+                                    <p class="mb-0">Nouvelle commande reçue</p>
+                                    <p class="mb-1">Commande n°12345 passée</p>
+                                    <div class="text-secondary">il y a 5 minutes</div>
                                 </div>
                             </div>
                         </li>
@@ -40,9 +40,9 @@
                             <div class="d-flex gap-3">
                                 <img src="{{ asset('assets/images/avatar/avatar-4.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
-                                    <p class="mb-0">New user registered</p>
-                                    <p class="mb-1">User @john_doe has signed up</p>
-                                    <div class="text-secondary">30 minutes ago</div>
+                                    <p class="mb-0">Nouvel utilisateur inscrit</p>
+                                    <p class="mb-1">L'utilisateur @john_doe s'est inscrit</p>
+                                    <div class="text-secondary">il y a 30 minutes</div>
                                 </div>
                             </div>
                         </li>
@@ -51,14 +51,14 @@
                             <div class="d-flex gap-3">
                                 <img src="{{ asset('assets/images/avatar/avatar-2.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
-                                    <p class="mb-0">Payment confirmed</p>
-                                    <p class="mb-1">Payment of $299 has been received</p>
-                                    <div class="text-secondary">1 hour ago</div>
+                                    <p class="mb-0">Paiement confirmé</p>
+                                    <p class="mb-1">Paiement de 299 $ reçu</p>
+                                    <div class="text-secondary">il y a 1 heure</div>
                                 </div>
                             </div>
                         </li>
                         <li class="px-4 py-3 text-center">
-                            <a href="#" class="text-primary ">View all notifications</a>
+                            <a href="#" class="text-primary ">Voir toutes les notifications</a>
                         </li>
                     </ul>
                 </div>
@@ -78,11 +78,11 @@
                             </div>
                         </div>
                         <div class="p-3 d-flex flex-column gap-1 small lh-lg">
-                            <a href="{{ route('dashboard') }}"><span>Home</span></a>
-                            <a href="#"><span>Inbox</span></a>
-                            <a href="#"><span>Chat</span></a>
-                            <a href="#"><span>Activity</span></a>
-                            <a href="#"><span>Account Settings</span></a>
+                            <a href="{{ route('dashboard') }}"><span>Accueil</span></a>
+                            <a href="#"><span>Boîte de réception</span></a>
+                            <a href="#"><span>Discussion</span></a>
+                            <a href="#"><span>Activité</span></a>
+                            <a href="#"><span>Paramètres du compte</span></a>
                         </div>
                     </div>
                 </div>
@@ -90,4 +90,5 @@
         </ul>
     </div>
 </nav>
+
 

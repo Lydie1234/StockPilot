@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Inventory - InApp Inventory Dashboard')
+@section('title', 'Inventaire - InApp Inventaire')
 
 @section('content')
 <div class="container-fluid">
@@ -8,11 +8,11 @@
         <div class="col-12">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="">
-              <h1 class="fs-3 mb-1">Inventory</h1>
-              <p class="mb-0">Manage your product inventory</p>
+              <h1 class="fs-3 mb-1">Inventaire</h1>
+              <p class="mb-0">Gérez votre inventaire de produits</p>
             </div>
             <div>
-              <a href="{{ route('pages.inventory.create') }}" class="btn btn-primary">Add Product</a>
+              <a href="{{ route('pages.inventory.create') }}" class="btn btn-primary">Ajouter un produit</a>
             </div>
           </div>
         </div>
@@ -21,11 +21,11 @@
         <div class="col-12">
           <div>
             <div class="d-flex gap-2 mb-3 flex-wrap justify-content-between">
-              <input type="text" class="form-control" placeholder="Search products..." style="max-width: 250px;">
+              <input type="text" class="form-control" placeholder="Rechercher des produits..." style="max-width: 250px;">
               <div class="d-flex gap-2">
 
                 <button class="btn btn-outline-secondary">
-                  <i class="ti ti-filter"></i> Filter
+                  <i class="ti ti-filter"></i> Filtrer
                 </button>
                 <button class="btn btn-outline-secondary">
                   <i class="ti ti-file-excel"></i> Excel
@@ -43,11 +43,11 @@
                   <th>Image</th>
 
                   <th>Code</th>
-                  <th>Category</th>
-                  <th>Brand</th>
-                  <th>Price</th>
-                  <th>Unit</th>
-                  <th>Quantity</th>
+                  <th>Catégorie</th>
+                  <th>Marque</th>
+                  <th>Prix</th>
+                  <th>Unité</th>
+                  <th>Quantité</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -169,18 +169,18 @@
               <tfoot class="">
 
                 <tr>
-                  <td class="border-bottom-0">Showing product per page</td>
+                  <td class="border-bottom-0">Affichage des produits par page</td>
                   <td colspan="9" class="border-bottom-0">
                     <nav aria-label="Page navigation" class="d-flex justify-content-end">
                       <ul class="pagination mb-0">
                         <li class="page-item disabled">
-                          <a class="page-link" href="#" tabindex="-1">Previous</a>
+                          <a class="page-link" href="#" tabindex="-1">Précédent</a>
                         </li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
                         <li class="page-item"><a class="page-link" href="#">2</a></li>
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item">
-                          <a class="page-link" href="#">Next</a>
+                          <a class="page-link" href="#">Suivant</a>
                         </li>
                       </ul>
                     </nav>

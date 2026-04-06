@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Reports - InApp Inventory Dashboard')
+@section('title', 'Rapports - InApp Inventaire')
 
 @section('content')
 <div class="container-fluid">
@@ -8,8 +8,8 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
           <div class="">
-            <h1 class="fs-3 mb-1">Reports</h1>
-            <p class="mb-0">View your inventory analytics and reports</p>
+            <h1 class="fs-3 mb-1">Rapports</h1>
+            <p class="mb-0">Consultez vos analyses et rapports d'inventaire</p>
           </div>
 
           </div>
@@ -21,9 +21,9 @@
         <div class="col-12 col-sm-6 col-md-3">
           <div class="card h-100">
             <div class="card-body p-4">
-              <h6 class="mb-4 ">Total Revenue</h6>
+              <h6 class="mb-4 ">Revenu total</h6>
               <h3 class="mb-1 fw-bold">$45,231</h3>
-              <p class="mb-0 text-success small"><i class="ti ti-arrow-up"> </i>12% from last month</p>
+              <p class="mb-0 text-success small"><i class="ti ti-arrow-up"> </i>12% du mois dernier</p>
             </div>
           </div>
         </div>
@@ -31,9 +31,9 @@
         <div class="col-12 col-sm-6 col-md-3">
           <div class="card h-100">
             <div class="card-body p-4">
-              <h6 class="mb-4 ">Products Sold</h6>
+              <h6 class="mb-4 ">Produits vendus</h6>
               <h3 class="mb-1 fw-bold">1,234</h3>
-              <p class="mb-0 text-success small"><i class="ti ti-arrow-up"> </i> 8% from last month</p>
+              <p class="mb-0 text-success small"><i class="ti ti-arrow-up"> </i> 8% du mois dernier</p>
             </div>
           </div>
         </div>
@@ -41,9 +41,9 @@
         <div class="col-12 col-sm-6 col-md-3">
           <div class="card h-100">
             <div class="card-body p-4">
-              <h6 class="mb-4 ">Low Stock Items</h6>
+              <h6 class="mb-4 ">Articles en faible stock</h6>
               <h3 class="mb-1 fw-bold">23</h3>
-              <p class="mb-0 text-danger small"><i class="ti ti-arrow-down"> </i> 3% from last month</p>
+              <p class="mb-0 text-danger small"><i class="ti ti-arrow-down"> </i> 3% du mois dernier</p>
             </div>
           </div>
         </div>
@@ -51,9 +51,9 @@
         <div class="col-12 col-sm-6 col-md-3">
           <div class="card h-100">
             <div class="card-body p-4">
-              <h6 class="mb-4 ">Out of Stock</h6>
+              <h6 class="mb-4 ">Rupture de stock</h6>
               <h3 class="mb-1 fw-bold">5</h3>
-              <p class="mb-0 text-danger small"><i class="ti ti-arrow-down"> </i> 2% from last month</p>
+              <p class="mb-0 text-danger small"><i class="ti ti-arrow-down"> </i> 2% du mois dernier</p>
             </div>
           </div>
         </div>
@@ -66,12 +66,12 @@
             <div class="card-body p-4">
               <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-2">
                 <div>
-                  <h2 class="mb-0 fs-5">Sales Overview</h2>
+                  <h2 class="mb-0 fs-5">Aperçu des ventes</h2>
 
                 </div>
                  <div class="controls">
-        <button id="btn-random" class="btn btn-light btn-sm">Randomize Data</button>
-        <button id="btn-update" class="btn btn-primary btn-sm">Show This Year Only</button>
+        <button id="btn-random" class="btn btn-light btn-sm">Randomiser les données</button>
+        <button id="btn-update" class="btn btn-primary btn-sm">Afficher uniquement cette année</button>
       </div>
               </div>
 
@@ -80,8 +80,8 @@
                 <div id="salesChart"></div>
 
 
-              <div class="d-flex justify-content-end">
-                <a href="#" class="small">View detailed report</a>
+                <div class="d-flex justify-content-end">
+                <a href="#" class="small">Voir le rapport détaillé</a>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                  <h2 class="mb-0 fs-5">Top Products</h2>
+                  <h2 class="mb-0 fs-5">Meilleures ventes</h2>
 
                 </div>
               </div>
@@ -110,7 +110,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
                         <h6 class="mb-0">Gaming Joy Stick</h6>
-                        <small class="text-secondary">156 units sold</small>
+                        <small class="text-secondary">156 unités vendues</small>
                       </div>
                       <div class="text-end">
                         <strong>$3,120</strong>
@@ -127,7 +127,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
                         <h6 class="mb-0">Wireless Headphones</h6>
-                        <small class="text-secondary">134 units sold</small>
+                        <small class="text-secondary">134 unités vendues</small>
                       </div>
                       <div class="text-end">
                         <strong>$2,680</strong>
@@ -144,7 +144,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
                         <h6 class="mb-0">Smartwatch</h6>
-                        <small class="text-secondary">98 units sold</small>
+                        <small class="text-secondary">98 unités vendues</small>
                       </div>
                       <div class="text-end">
                         <strong>$1,960</strong>
@@ -160,4 +160,5 @@
       </div>
     </div>
 @endsection
+
 
