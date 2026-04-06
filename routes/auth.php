@@ -12,10 +12,19 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
+    // Registration disabled: redirect to login.
+    // If you want to re-enable registration, restore the controller routes below.
+    // Route::get('register', [RegisteredUserController::class, 'create'])
+    //     ->name('register');
+    // Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::get('register', function () {
+        return redirect()->route('login');
+    })->name('register');
+
+    Route::post('register', function () {
+        return redirect()->route('login');
+    });
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

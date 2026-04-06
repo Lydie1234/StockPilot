@@ -14,11 +14,20 @@ class CheckRole
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, ?string $role = null): Response
     {
-        if (!Auth::check() || Auth::user()->role !== $role) {
+        if (!Auth::check()) {
+            if ($request->expectsJson()) {
+                abort(401);
+            }
+
+            return redirect()->guest(route('login'));
+        }
+
+        if ($role !== null && Auth::user()->role !== $role) {
             abort(403);
         }
+
         return $next($request);
     }
 }
