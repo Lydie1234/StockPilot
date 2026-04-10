@@ -57,3 +57,75 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# StockPilot
+
+> Gestion d'inventaire et de stock pour PME (Laravel 12)
+
+## Fonctionnalités principales
+- Gestion des produits, catégories, mouvements de stock
+- Rôles : Gérant (admin), Employé
+- Alertes de seuil critique, tableau de bord, rapports
+- Authentification (prévue via Breeze ou Jetstream)
+
+---
+
+## Étapes déjà réalisées
+
+- Initialisation du projet Laravel 12
+- Création des modèles : User, Category, Product, StockMovement
+- Création des migrations et seeders (avec rôles et données de base)
+- Création des factories pour tests/seed
+- Création des policies, observers, form requests
+- Création des controllers RESTful (API)
+- Mise en place des routes RESTful
+- Configuration du .env (SQLite par défaut, debug activé)
+- Installation des dépendances PHP (composer) et JS (npm)
+- Génération de la clé d’application
+- Migration et seed de la base de données
+
+---
+
+## Commandes de configuration
+
+Installer les dépendances :
+```bash
+composer install
+npm install
+```
+
+Créer le fichier .env (copie de .env.example ou voir ci-dessus)
+
+Générer la clé d’application :
+```bash
+php artisan key:generate
+```
+
+Lancer les migrations et seeders :
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+Démarrer le serveur de développement :
+```bash
+php artisan serve
+```
+
+---
+
+## Accès par défaut
+- Gérant : gerant@stockpilot.com / password
+- Employé : employe@stockpilot.com / password
+
+---
+
+## À faire / Conseils
+- Installer Laravel Breeze ou Jetstream pour l’authentification
+- Ajouter des tests automatisés
+- Développer le front-end (Blade, Vue, React, etc.)
+- Adapter le .env pour MySQL si besoin
+
+---
+
+Projet réalisé avec Laravel 12.
