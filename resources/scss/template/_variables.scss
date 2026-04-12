@@ -39,7 +39,7 @@ $border-color-translucent:   $gray-200 !default;
 $enable-negative-margins: true !default;
 $enable-rounded:              true !default;
 
-$headings-font-weight: 400 !default;
+$headings-font-weight: 600 !default;
 $grid-gutter-width:           2.5rem !default;
 
 // scss-docs-start position-map
@@ -87,7 +87,7 @@ $spacers: (
 ) !default;
 // scss-docs-end spacer-variables-maps
 
-$font-family-base: 'Poppins', sans-serif !default;
+$font-family-base: 'Inter', sans-serif !default;
 $font-size-root:              null !default;
 $font-size-base:              .875rem !default; // Assumes the browser default, typically `16px`
 $font-size-sm:                $font-size-base * .85 !default;
@@ -109,7 +109,7 @@ $h6-font-size:                $font-size-base !default;
 
 $input-btn-padding-y: 0.5rem !default;
 $input-btn-padding-x: .875rem !default;
-$table-th-font-weight:         400!default;
+$table-th-font-weight:         500!default;
 
 
 

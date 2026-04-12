@@ -1,7 +1,4 @@
 
-
-
-
 const apexChartsCdnUrl = 'https://cdn.jsdelivr.net/npm/apexcharts';
 let apexChartsLoader;
 
@@ -39,320 +36,380 @@ const loadApexCharts = async () => {
   return apexChartsLoader;
 };
 
-const initCharts = async () => {
-    const hasChartTargets = document.getElementById('salesPurchaseChart') || document.getElementById('customerChart') || document.getElementById('salesChart');
+const formatterCurrency = new Intl.NumberFormat('fr-FR', {
+  style: 'currency',
+  currency: 'XOF',
+  maximumFractionDigits: 0,
+});
 
-    if (!hasChartTargets) {
-      return;
-    }
+const toCurrency = (value) => formatterCurrency.format(Number(value) || 0);
 
-    const ApexCharts = await loadApexCharts();
+const getMonthlySeries = (months = 12) => {
+  if (window.StockPilotMock?.getMonthlySeries) {
+    return window.StockPilotMock.getMonthlySeries(months);
+  }
 
-    if (document.getElementById('salesPurchaseChart')) {
-         var options = {
-      series: [
-        {
-          name: 'Sales',
-          data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-        },
-        {
-          name: 'Purchase',
-          data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-        },
+  const labels = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return {
+    labels: labels.slice(-months),
+    entries: [120000, 135000, 118000, 146000, 160000, 156000, 171000, 168000, 174000, 183000, 179000, 192000].slice(-months),
+    outputs: [98000, 112000, 106000, 119000, 132000, 138000, 141000, 145000, 150000, 156000, 149000, 163000].slice(-months),
+    statusBreakdown: {
+      normal: 6,
+      alert: 2,
+    },
+  };
+};
 
-      ],
-      colors: ['#f7a085', '#E66239'],
-      chart: {
-        type: 'bar',
-        height: 350,
-        width: '100%',
-        parentHeightOffset: 0,
-        toolbar: {
-          show: false,
-        },
-      },
-      grid: {
-        show: true,
-        borderColor: "#e2e8f0",
+const buildSalesPurchaseConfig = () => {
+  const seriesData = getMonthlySeries(9);
 
+  return {
+    series: [
+      {
+        name: 'Entrees',
+        data: seriesData.entries,
       },
-      legend: {
-        show: true,
-        fontFamily: 'Poppins, serif',
-        fontWeight: 500,
-        markers: {
-          size: 5,
-          shape: 'square',
-          strokeWidth: 0,
-          fillColors: undefined,
-          customHTML: undefined,
-          onClick: undefined,
-          offsetX: -2,
-          offsetY: 0,
-        },
+      {
+        name: 'Sorties',
+        data: seriesData.outputs,
       },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: '85%',
-          borderRadius: 3,
-          borderRadiusApplication: 'end',
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
+    ],
+    colors: ['#0d6efd', '#e2e8f0'],
+    chart: {
+      type: 'bar',
+      height: 350,
+      width: '100%',
+      parentHeightOffset: 0,
+      fontFamily: 'Inter, sans-serif',
+      toolbar: {
         show: false,
-        width: 2,
-        colors: ['transparent'],
       },
-      xaxis: {
-        categories: ['28 Jan', '29 Jan', '30 Jan', '31 Jan', '1 Feb', '2 Feb', '3 Feb', '4 Feb', '5 Feb'],
-        axisBorder: {
-          show: false,
-          color: "#e2e8f0",
-          height: 1,
-          width: '100%',
-          offsetX: 0,
-          offsetY: 0,
-        },
-        axisTicks: {
-          show: false,
-          borderType: 'solid',
-          color: "#e2e8f0",
-          height: 6,
-          offsetX: 0,
-          offsetY: 0,
+    },
+    grid: {
+      show: true,
+      borderColor: '#f1f5f9',
+      strokeDashArray: 4,
+      padding: { top: 0, right: 0, bottom: 0, left: 10 },
+    },
+    legend: {
+      show: true,
+      position: 'top',
+      horizontalAlign: 'right',
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 500,
+      markers: {
+        size: 6,
+        shape: 'circle',
+        strokeWidth: 0,
+        offsetX: -2,
+        offsetY: 0,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '45%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end',
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      show: true,
+      width: 4,
+      colors: ['transparent'],
+    },
+    xaxis: {
+      categories: seriesData.labels,
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      labels: {
+        style: {
+          colors: '#64748b',
+          fontSize: '12px',
+          fontWeight: 500,
         },
       },
+    },
+    yaxis: {
+      labels: {
+        formatter: (value) => {
+          if (value >= 1000) {
+            return (value / 1000).toFixed(0) + 'k';
+          }
+          return value;
+        },
+        style: {
+          colors: '#64748b',
+          fontSize: '12px',
+          fontWeight: 500,
+        },
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    tooltip: {
+      y: {
+        formatter: (value) => toCurrency(value),
+      },
+    },
+  };
+};
 
-      yaxis: {
-        labels: {
-          formatter: function (e) {
-            return e + 'k';
-          },
-        },
-        title: {
-          text: '$ (thousands)' ,
-        },
-      },
-      fill: {
-        opacity: 1,
-      },
-     tooltip: {
-    			y: {
-    				formatter: function (val) {
-    					return "$ " + val + " thousands"
-    				}
-    			}
-    		},
-    };
+const buildStockSplitConfig = () => {
+  const { statusBreakdown } = getMonthlySeries(6);
+  const normal = Number(statusBreakdown?.normal) || 0;
+  const alert = Number(statusBreakdown?.alert) || 0;
+  const total = Math.max(normal + alert, 1);
+  const normalPercent = Math.round((normal / total) * 100);
+  const alertPercent = Math.round((alert / total) * 100);
 
-var chart = new ApexCharts(document.querySelector("#salesPurchaseChart"), options);
-
-chart.render();
-    }
-      if (document.getElementById('customerChart')) {
-    var options = {
-      series: [44, 55],
-      chart: {
-        height: 200,
-        type: 'radialBar',
-      },
-      colors: ['#5BE49B', '#E66239'],
-      plotOptions: {
-        radialBar: {
-          dataLabels: {
+  return {
+    series: [normalPercent, alertPercent],
+    chart: {
+      height: 320,
+      type: 'donut',
+      fontFamily: 'Inter, sans-serif',
+    },
+    colors: ['#198754', '#ffc107'],
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '75%',
+          labels: {
+            show: true,
             name: {
-              fontSize: '22px',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: '#64748b'
             },
             value: {
-              fontSize: '16px',
+              fontSize: '24px',
+              fontWeight: 700,
+              color: '#1e293b'
             },
             total: {
-              show: false,
-            },
-          },
-          hollow: {
-            margin: 3,
-            size: '40%',
-            background: 'transparent',
-            image: undefined,
-            imageWidth: 150,
-            imageHeight: 150,
-            imageOffsetX: 0,
-            imageOffsetY: 0,
-            imageClipped: true,
-            position: 'front',
-            dropShadow: {
-              enabled: false,
-              top: 0,
-              left: 0,
-              blur: 3,
-              opacity: 0.5,
-            },
-          },
-          track: {
-            show: true,
-            startAngle: undefined,
-            endAngle: undefined,
-            background: "#f0f0f0",
-            strokeWidth: '45%',
-            opacity: 1,
-            margin: 5,
-            dropShadow: {
-              enabled: false,
-              top: 0,
-              left: 0,
-              blur: 3,
-              opacity: 0.5,
-            },
-          },
-        },
-      },
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shade: 'dark',
-          type: 'vertical',
-          gradientToColors: ['#007867', '#FFD666', '#FFAC82'],
-          stops: [0, 100],
-        },
-      },
-      stroke: {
-        lineCap: 'round',
-      },
- labels: ['First Time', 'Return' ],
-
-    };
-
-    var chart = new ApexCharts(document.querySelector('#customerChart'), options);
-    chart.render();
-  }
-   if (document.getElementById('salesChart')) {
-   // --- Replace these arrays with your real monthly sales numbers (12 values each) ---
-    const salesThisYear = [42000, 53000, 48000, 61000, 72000, 69000, 74000, 82000, 78000, 86000, 91000, 97000];
-    const salesLastYear = [38000, 45000, 47000, 56000, 65000, 63000, 68000, 70000, 69000, 75000, 80000, 84000];
-
-    // Categories for x-axis (months)
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-    const options = {
-      chart: {
-        id: 'sales-overview',
-        type: 'area',
-        height: 420,
-        zoom: { enabled: false },
-        toolbar: {
-          show: false,
-        },
-      },
-      colors: ['#E66239', '#198754'],
-      stroke: { width: [3, 2.5], curve: 'smooth' },
-      markers: { size: 4, hover: { sizeOffset: 2 } },
-      series: [
-        { name: 'This Year', data: salesThisYear },
-        { name: 'Last Year', data: salesLastYear }
-      ],
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          inverseColors: false,
-          opacityFrom: 0.45,
-          opacityTo: 0.05,
-          stops: [20, 60, 100]
-        }
-      },
-      yaxis: {
-        labels: { formatter: function (val) { return formatCurrency(val); } },
-        title: { text: 'Sales (INR)' }
-      },
-      xaxis: {
-        categories: months,
-        tickPlacement: 'on'
-      },
-      tooltip: {
-        shared: true,
-        y: {
-          formatter: function(val) { return formatCurrency(val); }
-        }
-      },
-      legend: {
-        position: 'top',
-        horizontalAlign: 'right'
-      },
-      responsive: [
-        {
-          breakpoint: 640,
-          options: {
-            chart: { height: 340 },
-            legend: { position: 'bottom', horizontalAlign: 'center' }
+              show: true,
+              showAlways: true,
+              label: 'Total',
+              fontSize: '14px',
+              fontWeight: 500,
+              color: '#64748b',
+              formatter: function (w) {
+                return total + " art.";
+              }
+            }
           }
         }
-      ]
-    };
+      }
+    },
+    stroke: {
+      show: true,
+      colors: '#ffffff',
+      width: 4
+    },
+    labels: ['Stock normal', 'Sous seuil'],
+    legend: {
+      position: 'bottom',
+      horizontalAlign: 'center',
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 500,
+      markers: {
+        radius: 12,
+        offsetX: -4,
+      },
+      itemMargin: {
+        horizontal: 10,
+        vertical: 8
+      }
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    tooltip: {
+      y: {
+        formatter: function(val) {
+          return val + "%";
+        }
+      }
+    }
+  };
+};
 
-    // mount chart
-    const chart = new ApexCharts(document.querySelector("#salesChart"), options);
-    chart.render();
+const buildSalesOverviewConfig = () => {
+  const seriesData = getMonthlySeries(12);
 
-    // helper: format currency with thousands separators (assumes INR — change locale/currency as needed)
-    function formatCurrency(value) {
-      if (value == null) return '-';
-      // ensure numeric
-      const n = Number(value);
-      return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  return {
+    chart: {
+      id: 'sales-overview',
+      type: 'area',
+      height: 420,
+      zoom: { enabled: false },
+      toolbar: {
+        show: false,
+      },
+    },
+    colors: ['#00B8DB', '#E66239'],
+    stroke: { width: [3, 2.5], curve: 'smooth' },
+    markers: { size: 4, hover: { sizeOffset: 2 } },
+    series: [
+      { name: 'Entrees', data: seriesData.entries },
+      { name: 'Sorties', data: seriesData.outputs },
+    ],
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        inverseColors: false,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [20, 60, 100],
+      },
+    },
+    yaxis: {
+      labels: {
+        formatter: (value) => toCurrency(value),
+      },
+      title: {
+        text: 'Flux valorise (FCFA)',
+      },
+    },
+    xaxis: {
+      categories: seriesData.labels,
+      tickPlacement: 'on',
+    },
+    tooltip: {
+      shared: true,
+      y: {
+        formatter: (value) => toCurrency(value),
+      },
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+    },
+    responsive: [
+      {
+        breakpoint: 640,
+        options: {
+          chart: { height: 340 },
+          legend: { position: 'bottom', horizontalAlign: 'center' },
+        },
+      },
+    ],
+  };
+};
+
+const initCharts = async () => {
+  const hasChartTargets = document.getElementById('salesPurchaseChart') || document.getElementById('customerChart') || document.getElementById('salesChart');
+
+  if (!hasChartTargets) {
+    return;
+  }
+
+  const ApexCharts = await loadApexCharts();
+  const chartInstances = {
+    salesPurchase: null,
+    customerSplit: null,
+    salesOverview: null,
+  };
+
+  let entriesOnly = false;
+
+  const updateChartsFromMock = () => {
+    const monthly = getMonthlySeries(12);
+
+    if (chartInstances.salesPurchase) {
+      chartInstances.salesPurchase.updateOptions({
+        xaxis: { categories: monthly.labels.slice(-9) },
+      });
+      chartInstances.salesPurchase.updateSeries([
+        { name: 'Entrees', data: monthly.entries.slice(-9) },
+        { name: 'Sorties', data: monthly.outputs.slice(-9) },
+      ]);
     }
 
-    // Example control: Randomize data (for demo)
+    if (chartInstances.customerSplit) {
+      const normal = Number(monthly.statusBreakdown?.normal) || 0;
+      const alert = Number(monthly.statusBreakdown?.alert) || 0;
+      const total = Math.max(normal + alert, 1);
+      chartInstances.customerSplit.updateSeries([
+        Math.round((normal / total) * 100),
+        Math.round((alert / total) * 100),
+      ]);
+    }
+
+    if (chartInstances.salesOverview) {
+      chartInstances.salesOverview.updateOptions({
+        xaxis: {
+          categories: monthly.labels,
+          tickPlacement: 'on',
+        },
+      });
+
+      chartInstances.salesOverview.updateSeries(
+        entriesOnly
+          ? [{ name: 'Entrees', data: monthly.entries }]
+          : [
+              { name: 'Entrees', data: monthly.entries },
+              { name: 'Sorties', data: monthly.outputs },
+            ],
+      );
+    }
+  };
+
+  if (document.getElementById('salesPurchaseChart')) {
+    chartInstances.salesPurchase = new ApexCharts(
+      document.querySelector('#salesPurchaseChart'),
+      buildSalesPurchaseConfig(),
+    );
+    chartInstances.salesPurchase.render();
+  }
+
+  if (document.getElementById('customerChart')) {
+    chartInstances.customerSplit = new ApexCharts(
+      document.querySelector('#customerChart'),
+      buildStockSplitConfig(),
+    );
+    chartInstances.customerSplit.render();
+  }
+
+  if (document.getElementById('salesChart')) {
+    chartInstances.salesOverview = new ApexCharts(
+      document.querySelector('#salesChart'),
+      buildSalesOverviewConfig(),
+    );
+    chartInstances.salesOverview.render();
+
     const randomButton = document.getElementById('btn-random');
     if (randomButton) {
       randomButton.addEventListener('click', () => {
-        const rand = () => Math.round((Math.random() * 80 + 20) * 1000); // 20k - 100k
-        const newThisYear = Array.from({length: 12}, rand);
-        const newLastYear = Array.from({length: 12}, rand);
-        chart.updateSeries([
-          { name: 'This Year', data: newThisYear },
-          { name: 'Last Year', data: newLastYear }
-        ]);
+        window.dispatchEvent(new CustomEvent('stockpilot:mock-reset'));
       });
     }
 
-    // Example control: Toggle to show only This Year
-    let showingBoth = true;
     const updateButton = document.getElementById('btn-update');
     if (updateButton) {
       updateButton.addEventListener('click', () => {
-        if (showingBoth) {
-          chart.updateSeries([{ name: 'This Year', data: salesThisYear }]);
-          updateButton.textContent = 'Show Comparison';
-        } else {
-          chart.updateSeries([
-            { name: 'This Year', data: salesThisYear },
-            { name: 'Last Year', data: salesLastYear }
-          ]);
-          updateButton.textContent = 'Show This Year Only';
-        }
-        showingBoth = !showingBoth;
+        entriesOnly = !entriesOnly;
+        updateButton.textContent = entriesOnly
+          ? 'Afficher entree + sortie'
+          : 'Afficher entree seulement';
+        updateChartsFromMock();
       });
     }
-
-    // Public function: update chart with new monthly sales data
-    // call updateMonthlySales([arrayOf12], optionalCompareArrayOf12)
-    function updateMonthlySales(currentYearArray, compareYearArray = null) {
-      if (!Array.isArray(currentYearArray) || currentYearArray.length !== 12) {
-        console.warn('updateMonthlySales expects an array of 12 numbers for currentYearArray');
-        return;
-      }
-      const series = [{ name: 'This Year', data: currentYearArray }];
-      if (Array.isArray(compareYearArray) && compareYearArray.length === 12) {
-        series.push({ name: 'Last Year', data: compareYearArray });
-      }
-      chart.updateSeries(series);
-    }
   }
+
+  window.addEventListener('stockpilot:state-changed', updateChartsFromMock);
+  updateChartsFromMock();
 };
 
 if (document.readyState === 'loading') {

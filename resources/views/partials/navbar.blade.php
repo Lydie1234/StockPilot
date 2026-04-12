@@ -63,30 +63,6 @@
                     </ul>
                 </div>
             </li>
-
-            <li class="ms-3 dropdown">
-                <a href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ asset('assets/images/avatar/avatar-1.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
-                </a>
-                <div class="dropdown-menu dropdown-menu-end p-0" style="min-width: 200px;">
-                    <div>
-                        <div class="d-flex gap-3 align-items-center border-dashed border-bottom px-3 py-3">
-                            <img src="{{ asset('assets/images/avatar/avatar-1.jpg') }}" alt="" class="avatar avatar-md rounded-circle" />
-                            <div>
-                                <h4 class="mb-0 small">{{ auth()->user()->name ?? 'Shrina Tesla' }}</h4>
-                                <p class="mb-0 small">{{ auth()->check() ? '@' . strtok(auth()->user()->email, '@') : '@imshrina' }}</p>
-                            </div>
-                        </div>
-                        <div class="p-3 d-flex flex-column gap-1 small lh-lg">
-                            <a href="{{ route('dashboard') }}"><span>Accueil</span></a>
-                            <a href="#"><span>Boîte de réception</span></a>
-                            <a href="#"><span>Discussion</span></a>
-                            <a href="#"><span>Activité</span></a>
-                            <a href="#"><span>Paramètres du compte</span></a>
-                        </div>
-                    </div>
-                </div>
-            </li>
         </ul>
     </div>
 </nav>

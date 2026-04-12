@@ -57,3 +57,24 @@ $utilities: map-merge(
 );
 
 @import "bootstrap/scss/utilities/api";
+
+// Utility Classes
+.transition-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+.tracking-wide {
+    letter-spacing: 0.05em;
+}
+
+.sp-inventory-table-card {
+    .table > :not(caption) > * > * {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
