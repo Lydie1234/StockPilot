@@ -25,6 +25,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+
+        $this->call([
+            UserSeeder::class,
+        ]);
+
         User::query()->updateOrCreate(
             ['email' => 'employe@stockpilot.test'],
             [
@@ -34,5 +39,6 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
     }
 }

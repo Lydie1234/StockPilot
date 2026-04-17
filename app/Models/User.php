@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int $id
+ * @property string $role
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -24,6 +28,10 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -2,16 +2,31 @@
 
 namespace App\Models;
 
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
 
 class StockMovement extends Model
 {
+
+    use HasFactory;
+
+    protected $fillable = [
+        'product_id',
+        'user_id',
+        'type', // entrée, sortie, ajustement
+        'quantity',
+        'reason',
+        'created_at',
+
     protected $fillable = [
         'product_id',
         'user_id',
         'type',
         'quantity',
         'reason',
+
     ];
 
     public function product()
