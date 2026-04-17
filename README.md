@@ -58,6 +58,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+
 # StockPilot
 
 > Gestion d'inventaire et de stock pour PME (Laravel 12)
@@ -129,3 +130,7 @@ php artisan serve
 ---
 
 Projet réalisé avec Laravel 12.
+=======
+gerant@stockpilot.test / password
+employe@stockpilot.test / password
+
