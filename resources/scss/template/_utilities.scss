@@ -1,0 +1,80 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+$utilities: map-merge(
+  $utilities,
+  (
+    "font-size": (
+  rfs: true,
+  responsive: true,
+  property: font-size,
+  class: fs,
+  values: $font-sizes
+),
+"position": (
+  property: position,
+   responsive: true,
+  values: static relative absolute fixed sticky
+),
+"top": (
+  property: top,
+   responsive: true,
+  values: $position-values
+),
+"bottom": (
+  property: bottom,
+   responsive: true,
+  values: $position-values
+),
+"start": (
+  property: left,
+  class: start,
+   responsive: true,
+  
+  values: $position-values
+),
+"end": (
+  property: right,
+  class: end,
+   responsive: true,
+  values: $position-values
+),
+"translate-middle": (
+  property: transform,
+  class: translate-middle,
+   responsive: true,
+  values: (
+    null: translate(-50%, -50%),
+    x: translateX(-50%),
+    y: translateY(-50%),
+  )
+),
+  )
+);
+
+@import "bootstrap/scss/utilities/api";
+
+// Utility Classes
+.transition-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+}
+
+.tracking-wide {
+    letter-spacing: 0.05em;
+}
+
+.sp-inventory-table-card {
+    .table > :not(caption) > * > * {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+

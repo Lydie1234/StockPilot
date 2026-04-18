@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\StockMovement;
+use App\Observers\StockMovementObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
+        \App\Models\StockMovement::observe(\App\Models\Observers\StockMovementObserver::class);
+
+        StockMovement::observe(StockMovementObserver::class);
+
     }
 }
