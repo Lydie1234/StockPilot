@@ -19,14 +19,6 @@ class StockMovement extends Model
         'quantity',
         'reason',
         'created_at',
-
-    protected $fillable = [
-        'product_id',
-        'user_id',
-        'type',
-        'quantity',
-        'reason',
-
     ];
 
     public function product()

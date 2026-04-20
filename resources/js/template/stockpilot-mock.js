@@ -680,15 +680,16 @@ const renderToast = (message, tone = "success") => {
     }, 3200);
 };
 
-const fillCategorySelect = (select, selectedValue = "", includeAllOption = true) => {
+const fillCategorySelect = (select, selectedValue = "", includeAllOption = true, categoriesList = null) => {
     if (!select) {
         return;
     }
 
+    const cats = categoriesList || state.categories;
     const previous = String(selectedValue || select.value || "");
     const options = [
         ...(includeAllOption ? ["<option value=''>Toutes les categories</option>"] : []),
-        ...state.categories.map((category) => `<option value='${category.id}'>${category.name}</option>`),
+        ...cats.map((category) => `<option value='${category.id}'>${category.name}</option>`),
     ];
 
     select.innerHTML = options.join("");
@@ -1435,6 +1436,10 @@ const renderReportsPage = () => {
         status: "",
     };
 
+    let allMovements = [];
+    let products = [];
+    let categories = [];
+
     const bindKpi = (name, value) => {
         const node = root.querySelector(`[data-sp-kpi='${name}']`);
         if (node) {
@@ -1446,47 +1451,58 @@ const renderReportsPage = () => {
         const now = Date.now();
         const maxAge = Number(filterState.period) * 24 * 60 * 60 * 1000;
 
-        return [...state.movements]
+        return [...allMovements]
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
             .filter((movement) => {
-                const product = getProductById(movement.product_id);
-                if (!product) {
-                    return false;
-                }
-
                 const age = now - new Date(movement.created_at).getTime();
                 const periodMatch = maxAge > 0 ? age <= maxAge : true;
                 const typeMatch = !filterState.type || movement.type === filterState.type;
-                const categoryMatch = !filterState.category || String(product.category_id) === String(filterState.category);
-                const statusMatch = !filterState.status || getStockStatus(product) === filterState.status;
+                
+                // Vérifier la catégorie via le produit
+                const product = products.find(p => p.id === movement.product_id);
+                const categoryMatch = !filterState.category || (product && String(product.category_id) === String(filterState.category));
+                
+                // Vérifier le statut du stock
+                let statusMatch = true;
+                if (filterState.status && product) {
+                    const status = product.current_stock <= 0 ? 'critique' : product.current_stock <= product.alert_threshold ? 'faible' : 'normal';
+                    statusMatch = status === filterState.status;
+                }
 
                 return periodMatch && typeMatch && categoryMatch && statusMatch;
             });
     };
 
     const render = () => {
-        fillCategorySelect(refs.filterCategory, filterState.category);
+        fillCategorySelect(refs.filterCategory, filterState.category, true, categories);
 
-        const dashboard = getDashboardData();
         const movements = getFilteredMovements();
+        
+        // Calculer les KPIs
+        const totalStockValue = products.reduce((sum, p) => sum + (p.current_stock * p.unit_price), 0);
+        const lowProducts = products.filter(p => p.current_stock > 0 && p.current_stock <= p.alert_threshold).length;
+        const criticalProducts = products.filter(p => p.current_stock <= 0).length;
 
-        bindKpi("report-stock-value", formatCurrency(dashboard.totalStockValue));
+        bindKpi("report-stock-value", formatCurrency(totalStockValue));
         bindKpi("report-movement-count", String(movements.length));
-        bindKpi("report-low-stock", String(dashboard.lowProducts.length));
-        bindKpi("report-critical", String(dashboard.criticalProducts.length));
+        bindKpi("report-low-stock", String(lowProducts));
+        bindKpi("report-critical", String(criticalProducts));
 
         if (refs.movementsBody) {
             refs.movementsBody.innerHTML = movements.length
                 ? movements
                     .slice(0, 20)
                     .map((movement) => {
-                        const product = getProductById(movement.product_id);
-                        const category = product ? getCategoryById(product.category_id) : null;
+                        const product = products.find(p => p.id === movement.product_id);
+                        const category = categories.find(c => c.id === product?.category_id);
                         const badge = movement.type === "sortie"
                             ? "bg-danger-subtle text-danger border border-danger"
                             : movement.type === "entree"
                                 ? "bg-success-subtle text-success border border-success"
                                 : "bg-warning-subtle text-warning border border-warning";
+
+                        // Calculer le stock après le mouvement (approximatif)
+                        const newStock = product?.current_stock || 0;
 
                         return `
                             <tr class='sp-report-row'>
@@ -1496,7 +1512,7 @@ const renderReportsPage = () => {
                                 <td><span class='badge sp-report-type-badge ${badge}'>${movement.type}</span></td>
                                 <td class='text-end'><span class='sp-report-number'>${formatNumber(movement.quantity)}</span></td>
                                 <td class='sp-report-reason'>${movement.reason || "-"}</td>
-                                <td class='text-end'><span class='sp-report-number sp-report-stock'>${formatNumber(movement.new_stock)}</span></td>
+                                <td class='text-end'><span class='sp-report-number sp-report-stock'>${formatNumber(newStock)}</span></td>
                             </tr>
                         `;
                     })
@@ -1515,7 +1531,7 @@ const renderReportsPage = () => {
 
             const list = Object.entries(topProducts)
                 .map(([productId, quantity]) => {
-                    const product = getProductById(productId);
+                    const product = products.find(p => p.id === parseInt(productId));
                     return {
                         product,
                         quantity,
@@ -1541,6 +1557,28 @@ const renderReportsPage = () => {
         }
     };
 
+    const loadData = async () => {
+        try {
+            // Charger les mouvements depuis l'API
+            const movementsResponse = await window.axios.get('/api/stock-movements?page=1');
+            allMovements = movementsResponse.data.data ? movementsResponse.data.data : movementsResponse.data;
+            
+            // Charger les produits et catégories depuis l'API
+            const [productsData, categoriesData] = await Promise.all([
+                window.axios.get('/api/products'),
+                window.axios.get('/api/categories')
+            ]);
+            
+            products = productsData.data.data ? productsData.data.data : productsData.data;
+            categories = categoriesData.data.data ? categoriesData.data.data : categoriesData.data;
+            
+            render();
+        } catch (error) {
+            console.error('[Reports] Erreur chargement données:', error);
+            refs.movementsBody.innerHTML = "<tr><td colspan='8' class='text-center text-danger py-4'>Erreur chargement données API</td></tr>";
+        }
+    };
+
     refs.filterPeriod?.addEventListener("change", (event) => {
         filterState.period = Number(event.target.value || 30);
         render();
@@ -1561,8 +1599,7 @@ const renderReportsPage = () => {
         render();
     });
 
-    render();
-    subscribe(render);
+    loadData();
 };
 
 const stockPilotMockApi = {

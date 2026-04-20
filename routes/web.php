@@ -19,9 +19,11 @@ Route::get('/', function () {
 //require __DIR__.'/auth.php';
 
 // RESTful routes
-Route::middleware(['auth'])->group(function () {
+Route::prefix('api')->middleware(['auth'])->group(function () {
     Route::apiResource('categories', App\Http\Controllers\CategoryController::class);
     Route::apiResource('products', App\Http\Controllers\ProductController::class);
+    Route::apiResource('users', App\Http\Controllers\UserController::class);
+    Route::post('users/{user}/reset-password', [App\Http\Controllers\UserController::class, 'resetPassword']);
     Route::get('products-below-threshold', [App\Http\Controllers\ProductController::class, 'belowThreshold']);
     Route::apiResource('stock-movements', App\Http\Controllers\StockMovementController::class)->only(['index', 'store', 'show']);
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index']);

@@ -287,7 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setFieldError('email', 'Veuillez saisir un email valide.');
                 isValid = false;
             }
-            if (!phoneRegex.test(payload.phone)) {
+            // Le téléphone est optionnel - valider seulement s'il est rempli
+            if (payload.phone && !phoneRegex.test(payload.phone)) {
                 setFieldError('phone', 'Veuillez saisir un numero de telephone valide.');
                 isValid = false;
             }
@@ -541,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    refs.form.addEventListener('submit', (event) => {
+    refs.form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const payload = getPayload();
@@ -560,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                userApi.addUser(payload);
+                await userApi.addUser(payload);
                 setFeedback(refs.feedback, 'Employe ajoute avec succes.', 'success');
                 closeModal();
                 renderUsers();
@@ -577,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            userApi.updateUser(state.editingUserId, payload);
+            await userApi.updateUser(state.editingUserId, payload);
             setFeedback(refs.feedback, 'Utilisateur mis a jour avec succes.', 'success');
             closeModal();
             renderUsers();

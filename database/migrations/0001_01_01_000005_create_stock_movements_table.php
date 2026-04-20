@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['entrée', 'sortie', 'ajustement']);
+            $table->enum('type', ['entree', 'sortie', 'ajustement']);
             $table->integer('quantity');
             $table->string('reason');
             $table->timestamps();
