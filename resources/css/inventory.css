@@ -1,0 +1,88 @@
+/* Styles pour la gestion des mouvements de stock */
+
+/* Formatage du texte préformaté dans les alertes */
+.pre-wrap {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Styles pour les alertes de validation */
+.alert {
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.alert-danger {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.alert-warning {
+    background-color: #fffbeb;
+    border-color: #fed7aa;
+    color: #ea580c;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #16a34a;
+}
+
+/* Styles pour les états de validation */
+.form-control.is-invalid {
+    border-color: #dc2626;
+    background-color: #fef2f2;
+}
+
+.form-control.is-valid {
+    border-color: #16a34a;
+    background-color: #f0fdf4;
+}
+
+/* Animation pour les messages d'erreur */
+.alert {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styles pour les tooltips de validation */
+.validation-tooltip {
+    font-size: 0.75rem;
+    max-width: 200px;
+}
+
+/* Styles pour les badges de stock */
+.stock-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.stock-badge.normal {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.stock-badge.warning {
+    background-color: #fffbeb;
+    color: #ea580c;
+}
+
+.stock-badge.danger {
+    background-color: #fef2f2;
+    color: #dc2626;
+}

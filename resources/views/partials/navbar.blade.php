@@ -28,7 +28,7 @@
                     <ul class="list-unstyled p-0 m-0">
                         <li class="p-3 border-bottom ">
                             <div class="d-flex gap-3">
-                                <img src="{{ asset('assets/images/avatar/avatar-1.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="{{ asset('assets/images/logo-icon.svg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">Nouvelle commande reçue</p>
                                     <p class="mb-1">Commande n°12345 passée</p>
@@ -38,7 +38,7 @@
                         </li>
                         <li class="p-3 border-bottom ">
                             <div class="d-flex gap-3">
-                                <img src="{{ asset('assets/images/avatar/avatar-4.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="{{ asset('assets/images/logo-icon.svg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">Nouvel utilisateur inscrit</p>
                                     <p class="mb-1">L'utilisateur @john_doe s'est inscrit</p>
@@ -49,7 +49,7 @@
 
                         <li class="p-3 border-bottom">
                             <div class="d-flex gap-3">
-                                <img src="{{ asset('assets/images/avatar/avatar-2.jpg') }}" alt="" class="avatar avatar-sm rounded-circle" />
+                                <img src="{{ asset('assets/images/logo-icon.svg') }}" alt="" class="avatar avatar-sm rounded-circle" />
                                 <div class="flex-grow-1 small">
                                     <p class="mb-0">Paiement confirmé</p>
                                     <p class="mb-1">Paiement de 299 $ reçu</p>

@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr>
                     <td class="ps-4">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="${escapeHtml(user.avatar)}" alt="${escapeHtml(user.name)}" class="avatar avatar-md rounded-circle object-fit-cover">
+                            <img src="${escapeHtml(user.avatar)}" alt="${escapeHtml(user.name)}" class="avatar avatar-md rounded-circle object-fit-cover" onerror="this.onerror=null;this.src='/assets/images/logo-icon.svg';">
                             <div>
                                 <p class="mb-0 fw-semibold text-dark">${escapeHtml(user.name)} ${isSelf ? "<span class='text-muted small'>(Vous)</span>" : ''}</p>
                                 <small class="text-secondary">Derniere connexion: ${escapeHtml(formatDate(user.lastLogin))}</small>

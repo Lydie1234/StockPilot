@@ -10,6 +10,9 @@
     @auth
     <script>
         window.userRole = "{{ auth()->user()->role }}";
+        window.userId = {{ auth()->id() }};
+        window.userName = @json(auth()->user()->name);
+        window.userEmail = @json(auth()->user()->email);
     </script>
     @endauth
 </head>

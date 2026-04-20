@@ -1,40 +1,4 @@
-
-const apexChartsCdnUrl = 'https://cdn.jsdelivr.net/npm/apexcharts';
-let apexChartsLoader;
-
-const loadApexCharts = async () => {
-  if (window.ApexCharts) {
-    return window.ApexCharts;
-  }
-
-  if (!apexChartsLoader) {
-    apexChartsLoader = new Promise((resolve, reject) => {
-      const existingScript = document.querySelector('script[data-apexcharts-cdn="true"]');
-
-      if (existingScript) {
-        existingScript.addEventListener('load', () => resolve(window.ApexCharts));
-        existingScript.addEventListener('error', () => reject(new Error('Unable to load ApexCharts from CDN.')));
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = apexChartsCdnUrl;
-      script.async = true;
-      script.dataset.apexchartsCdn = 'true';
-      script.onload = () => {
-        if (window.ApexCharts) {
-          resolve(window.ApexCharts);
-        } else {
-          reject(new Error('ApexCharts global is not available after loading script.'));
-        }
-      };
-      script.onerror = () => reject(new Error('Unable to load ApexCharts from CDN.'));
-      document.head.appendChild(script);
-    });
-  }
-
-  return apexChartsLoader;
-};
+import ApexCharts from 'apexcharts';
 
 const formatterCurrency = new Intl.NumberFormat('fr-FR', {
   style: 'currency',
@@ -308,14 +272,12 @@ const buildSalesOverviewConfig = () => {
   };
 };
 
-const initCharts = async () => {
+const initCharts = () => {
   const hasChartTargets = document.getElementById('salesPurchaseChart') || document.getElementById('customerChart') || document.getElementById('salesChart');
 
   if (!hasChartTargets) {
     return;
   }
-
-  const ApexCharts = await loadApexCharts();
   const chartInstances = {
     salesPurchase: null,
     customerSplit: null,

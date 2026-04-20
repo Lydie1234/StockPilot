@@ -32,6 +32,12 @@ async function request(method, url, data = null) {
         const response = await window.axios(config);
         return response.data;
     } catch (error) {
+        if (error.response?.status === 401) {
+            const authMessage = 'Session expirée ou non authentifiée. Veuillez vous reconnecter.';
+            console.error(`[API] ${method} ${url}:`, authMessage);
+            throw new Error(authMessage);
+        }
+
         const message = error.response?.data?.error || error.message || 'Erreur serveur';
         console.error(`[API] ${method} ${url}:`, message);
         throw new Error(message);

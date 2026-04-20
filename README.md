@@ -116,8 +116,8 @@ php artisan serve
 ---
 
 ## Accès par défaut
-- Gérant : gerant@stockpilot.com / password
-- Employé : employe@stockpilot.com / password
+- Gérant : gerant@stockpilot.test / password
+- Employé : employe@stockpilot.test / password
 
 ---
 
