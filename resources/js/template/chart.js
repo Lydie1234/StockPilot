@@ -8,12 +8,28 @@ const formatterCurrency = new Intl.NumberFormat('fr-FR', {
 
 const toCurrency = (value) => formatterCurrency.format(Number(value) || 0);
 
-const getMonthlySeries = (months = 12) => {
-  if (window.StockPilotMock?.getMonthlySeries) {
-    return window.StockPilotMock.getMonthlySeries(months);
+const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const normalizeMovementType = (value) => String(value || '')
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '');
+
+const normalizeCollection = (payload) => {
+  if (Array.isArray(payload)) {
+    return payload;
   }
 
-  const labels = ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'];
+  if (Array.isArray(payload?.data)) {
+    return payload.data;
+  }
+
+  return [];
+};
+
+const buildFallbackMonthlySeries = (months = 12) => {
+  const labels = MONTH_LABELS;
+
   return {
     labels: labels.slice(-months),
     entries: [120000, 135000, 118000, 146000, 160000, 156000, 171000, 168000, 174000, 183000, 179000, 192000].slice(-months),
@@ -25,18 +41,139 @@ const getMonthlySeries = (months = 12) => {
   };
 };
 
-const buildSalesPurchaseConfig = () => {
-  const seriesData = getMonthlySeries(9);
+const sliceSeries = (seriesData, months) => ({
+  labels: seriesData.labels.slice(-months),
+  entries: seriesData.entries.slice(-months),
+  outputs: seriesData.outputs.slice(-months),
+  statusBreakdown: seriesData.statusBreakdown,
+});
+
+const buildMonthSkeleton = (months = 12) => {
+  const now = new Date();
+  const labels = [];
+  const keys = [];
+
+  for (let offset = months - 1; offset >= 0; offset -= 1) {
+    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+    keys.push(key);
+    labels.push(MONTH_LABELS[date.getMonth()]);
+  }
+
+  return {
+    labels,
+    keys,
+    entries: Array(months).fill(0),
+    outputs: Array(months).fill(0),
+  };
+};
+
+const fetchAllMovements = async (api) => {
+  const rows = [];
+  let page = 1;
+  let lastPage = 1;
+
+  do {
+    const response = await api.movements.getAll(page);
+    rows.push(...normalizeCollection(response));
+
+    const reportedLastPage = Number(
+      response?.last_page
+      || response?.meta?.last_page
+      || response?.links?.last
+      || 1,
+    );
+    lastPage = Number.isFinite(reportedLastPage) && reportedLastPage > 0 ? reportedLastPage : 1;
+    page += 1;
+  } while (page <= lastPage);
+
+  return rows;
+};
+
+const buildMonthlySeriesFromApi = async (months = 12) => {
+  if (window.StockPilotMock?.getMonthlySeries) {
+    return window.StockPilotMock.getMonthlySeries(months);
+  }
+
+  const api = window.StockPilotAPI;
+  if (!api?.movements?.getAll || !api?.products?.getAll) {
+    return buildFallbackMonthlySeries(months);
+  }
+
+  try {
+    const [movements, productsResponse] = await Promise.all([
+      fetchAllMovements(api),
+      api.products.getAll(),
+    ]);
+    const products = normalizeCollection(productsResponse);
+    const productPriceById = new Map(
+      products.map((product) => [Number(product.id), Number(product.unit_price) || 0]),
+    );
+
+    const series = buildMonthSkeleton(months);
+    const monthIndex = new Map(series.keys.map((key, index) => [key, index]));
+
+    movements.forEach((movement) => {
+      const createdAt = new Date(movement.created_at);
+      if (Number.isNaN(createdAt.getTime())) {
+        return;
+      }
+
+      const key = `${createdAt.getFullYear()}-${String(createdAt.getMonth() + 1).padStart(2, '0')}`;
+      const index = monthIndex.get(key);
+      if (index === undefined) {
+        return;
+      }
+
+      const movementType = normalizeMovementType(movement.type);
+      if (movementType !== 'entree' && movementType !== 'sortie') {
+        return;
+      }
+
+      const quantity = Math.max(Number(movement.quantity) || 0, 0);
+      const unitPrice = Math.max(Number(movement?.product?.unit_price) || productPriceById.get(Number(movement.product_id)) || 0, 0);
+      const amount = quantity * unitPrice;
+
+      if (movementType === 'entree') {
+        series.entries[index] += amount;
+      } else {
+        series.outputs[index] += amount;
+      }
+    });
+
+    const normalCount = products.filter((product) => (
+      Number(product.current_stock) > Number(product.alert_threshold)
+    )).length;
+    const alertCount = Math.max(products.length - normalCount, 0);
+
+    return {
+      labels: series.labels,
+      entries: series.entries.map((value) => Math.round(value)),
+      outputs: series.outputs.map((value) => Math.round(value)),
+      statusBreakdown: {
+        normal: normalCount,
+        alert: alertCount,
+      },
+    };
+  } catch (error) {
+    console.error('[Charts] Erreur buildMonthlySeriesFromApi:', error);
+    return buildFallbackMonthlySeries(months);
+  }
+};
+
+const buildSalesPurchaseConfig = (seriesData) => {
+  const data = sliceSeries(seriesData, 9);
 
   return {
     series: [
       {
         name: 'Entrees',
-        data: seriesData.entries,
+        data: data.entries,
       },
       {
         name: 'Sorties',
-        data: seriesData.outputs,
+        data: data.outputs,
       },
     ],
     colors: ['#0d6efd', '#e2e8f0'],
@@ -87,7 +224,7 @@ const buildSalesPurchaseConfig = () => {
       colors: ['transparent'],
     },
     xaxis: {
-      categories: seriesData.labels,
+      categories: data.labels,
       axisBorder: {
         show: false,
       },
@@ -128,8 +265,8 @@ const buildSalesPurchaseConfig = () => {
   };
 };
 
-const buildStockSplitConfig = () => {
-  const { statusBreakdown } = getMonthlySeries(6);
+const buildStockSplitConfig = (seriesData) => {
+  const { statusBreakdown } = seriesData;
   const normal = Number(statusBreakdown?.normal) || 0;
   const alert = Number(statusBreakdown?.alert) || 0;
   const total = Math.max(normal + alert, 1);
@@ -208,8 +345,7 @@ const buildStockSplitConfig = () => {
   };
 };
 
-const buildSalesOverviewConfig = () => {
-  const seriesData = getMonthlySeries(12);
+const buildSalesOverviewConfig = (seriesData) => {
 
   return {
     chart: {
@@ -284,10 +420,15 @@ const initCharts = () => {
     salesOverview: null,
   };
 
+  let monthlySeries = buildFallbackMonthlySeries(12);
+  let refreshTimer = null;
+  let refreshing = false;
+  let pendingRefresh = false;
+
   let entriesOnly = false;
 
-  const updateChartsFromMock = () => {
-    const monthly = getMonthlySeries(12);
+  const applySeriesToCharts = () => {
+    const monthly = monthlySeries;
 
     if (chartInstances.salesPurchase) {
       chartInstances.salesPurchase.updateOptions({
@@ -328,10 +469,40 @@ const initCharts = () => {
     }
   };
 
+  const refreshSeriesFromApi = async () => {
+    if (refreshing) {
+      pendingRefresh = true;
+      return;
+    }
+
+    refreshing = true;
+    try {
+      monthlySeries = await buildMonthlySeriesFromApi(12);
+      applySeriesToCharts();
+    } finally {
+      refreshing = false;
+
+      if (pendingRefresh) {
+        pendingRefresh = false;
+        refreshSeriesFromApi();
+      }
+    }
+  };
+
+  const scheduleRefresh = () => {
+    if (refreshTimer) {
+      window.clearTimeout(refreshTimer);
+    }
+
+    refreshTimer = window.setTimeout(() => {
+      refreshSeriesFromApi();
+    }, 150);
+  };
+
   if (document.getElementById('salesPurchaseChart')) {
     chartInstances.salesPurchase = new ApexCharts(
       document.querySelector('#salesPurchaseChart'),
-      buildSalesPurchaseConfig(),
+      buildSalesPurchaseConfig(monthlySeries),
     );
     chartInstances.salesPurchase.render();
   }
@@ -339,7 +510,7 @@ const initCharts = () => {
   if (document.getElementById('customerChart')) {
     chartInstances.customerSplit = new ApexCharts(
       document.querySelector('#customerChart'),
-      buildStockSplitConfig(),
+      buildStockSplitConfig(monthlySeries),
     );
     chartInstances.customerSplit.render();
   }
@@ -347,7 +518,7 @@ const initCharts = () => {
   if (document.getElementById('salesChart')) {
     chartInstances.salesOverview = new ApexCharts(
       document.querySelector('#salesChart'),
-      buildSalesOverviewConfig(),
+      buildSalesOverviewConfig(monthlySeries),
     );
     chartInstances.salesOverview.render();
 
@@ -365,13 +536,13 @@ const initCharts = () => {
         updateButton.textContent = entriesOnly
           ? 'Afficher entree + sortie'
           : 'Afficher entree seulement';
-        updateChartsFromMock();
+        applySeriesToCharts();
       });
     }
   }
 
-  window.addEventListener('stockpilot:state-changed', updateChartsFromMock);
-  updateChartsFromMock();
+  window.addEventListener('stockpilot:state-changed', scheduleRefresh);
+  scheduleRefresh();
 };
 
 if (document.readyState === 'loading') {

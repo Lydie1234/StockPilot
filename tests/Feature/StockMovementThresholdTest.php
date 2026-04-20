@@ -45,7 +45,7 @@ class StockMovementThresholdTest extends TestCase
         $response = $this->actingAs($user)->postJson('/api/stock-movements', [
             'product_id' => $product->id,
             'type' => 'sortie',
-            'quantity' => 5, // remaining would be 5 == threshold
+            'quantity' => 5, 
             'reason' => 'Test seuil minimum',
         ]);
 
